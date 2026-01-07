@@ -1,4 +1,7 @@
-import os
+﻿import os
+import sys
+import logging
+from datetime import datetime
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -33,9 +36,75 @@ OUT_DIR = "outputs"
 PLOT_DIR = os.path.join(OUT_DIR, "plots")
 os.makedirs(PLOT_DIR, exist_ok=True)
 
+# Logging setup - logs to both console and file
+LOG_FILE = os.path.join(OUT_DIR, f"run_log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
+
+def setup_logging():
+    """Setup dual logging to console and file."""
+    # Create formatter
+    formatter = logging.Formatter('%(message)s')
+    
+    # Setup root logger
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    
+    # Clear existing handlers
+    logger.handlers = []
+    
+    # Console handler
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+    
+    # File handler
+    file_handler = logging.FileHandler(LOG_FILE, mode='w', encoding='utf-8')
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+    
+    return logger
+
+logger = setup_logging()
+
+# Override print to also log to file
+_original_print = print
+def print(*args, **kwargs):
+    message = ' '.join(str(arg) for arg in args)
+    logger.info(message)
+
 MAX_FEATURE_HISTS = 20
 CORR_TOP_FEATURES = 50
 
+
+
+def eda_summary(X, y, X_eval):
+    \"\"\"Print consolidated EDA summary report.\"\"\"
+    header("EDA SUMMARY REPORT")
+    
+    print("Dataset Overview:")
+    print(f"  Training samples: {len(X):,}")
+    print(f"  Evaluation samples: {len(X_eval):,}")
+    print(f"  Features: {X.shape[1]}")
+    
+    print("\nData Quality Checks:")
+    null_count = X.isnull().sum().sum()
+    null_pct = (X.isnull().sum().sum() / (X.shape[0] * X.shape[1])) * 100
+    print(f"  Null values: {null_count} ({null_pct:.2f}%)")
+    
+    dup_rows = X.duplicated().sum()
+    print(f"  Duplicate rows: {dup_rows}")
+    
+    col_hash = X.apply(lambda s: pd.util.hash_pandas_object(s, index=False).sum())
+    dup_cols = col_hash.duplicated().sum()
+    print(f"  Duplicate columns: {dup_cols}")
+    
+    print("\nTarget Statistics:")
+    print(f"  Mean: {y.mean():.6f}")
+    print(f"  Median: {np.median(y):.6f}")
+    print(f"  Std: {y.std():.6f}")
+    print(f"  Range: [{y.min():.6f}, {y.max():.6f}]")
+    
+    print("\nAll EDA checks completed!")
+    print(f"Log file saved to: {LOG_FILE}")
 
 def header(t):
     print("\n" + "=" * 90)
@@ -100,12 +169,12 @@ def plot_r2_for_best(best_name, r2_train, r2_val, r2_test, filename="r2_best_mod
     x = np.arange(len(labels))
     plt.bar(x, values)
     plt.xticks(x, labels)
-    plt.ylabel("R²")
-    plt.title(f"R² for Best Model: {best_name}")
+    plt.ylabel("RÂ²")
+    plt.title(f"RÂ² for Best Model: {best_name}")
     plt.tight_layout()
     plt.savefig(os.path.join(PLOT_DIR, filename), dpi=200)
     plt.close()
-    print(f"✅ Saved Best Model R² graph to: {os.path.join(PLOT_DIR, filename)}")
+    print(f"âœ… Saved Best Model RÂ² graph to: {os.path.join(PLOT_DIR, filename)}")
 
 
 # ----------------------------
@@ -225,7 +294,7 @@ def target_distribution(y_train, y_val, y_test):
     plot_target_distribution(y_train, "Target distribution (Train)", "target_train_hist.png")
     plot_target_distribution(y_val, "Target distribution (Val)", "target_val_hist.png")
     plot_target_distribution(y_test, "Target distribution (Test)", "target_test_hist.png")
-    print(f"✅ Saved target histograms to: {PLOT_DIR}")
+    print(f"âœ… Saved target histograms to: {PLOT_DIR}")
 
 
 def outlier_check_report_only(X: pd.DataFrame):
@@ -281,7 +350,7 @@ def correlation_analysis(X: pd.DataFrame, y: np.ndarray):
         f"corr_heatmap_top{len(top_feats)}.png",
     )
 
-    print(f"✅ Saved correlation plots to: {PLOT_DIR}")
+    print(f"âœ… Saved correlation plots to: {PLOT_DIR}")
 
 
 # ----------------------------
@@ -401,7 +470,7 @@ def hypertune_hgb_no_cv(X_train, y_train, X_val, y_val, seed=42):
     os.makedirs(OUT_DIR, exist_ok=True)
     tune_df = pd.DataFrame(tuning_rows).sort_values("val_rmse")
     tune_df.to_csv(os.path.join(OUT_DIR, "hgb_tuning_no_cv.csv"), index=False)
-    print(f"✅ Saved tuning table: {os.path.join(OUT_DIR, 'hgb_tuning_no_cv.csv')}")
+    print(f"âœ… Saved tuning table: {os.path.join(OUT_DIR, 'hgb_tuning_no_cv.csv')}")
 
     return best, best_params, tune_df
 
@@ -463,7 +532,7 @@ def main():
         variances = X_num.var().sort_values(ascending=False)
         top_cols = variances.head(min(MAX_FEATURE_HISTS, len(variances))).index.tolist()
         plot_feature_histograms(X_num, top_cols, filename_prefix="hist")
-        print(f"✅ Saved feature histograms to: {PLOT_DIR}")
+        print(f"âœ… Saved feature histograms to: {PLOT_DIR}")
     else:
         print("No numeric features detected -> skipping histograms.")
 
@@ -523,7 +592,7 @@ def main():
     }
 
     # ------------------------------------------------
-    # 5) TRAIN ON TRAIN → EVALUATE ON VALIDATION (baseline selection)
+    # 5) TRAIN ON TRAIN â†’ EVALUATE ON VALIDATION (baseline selection)
     # ------------------------------------------------
     header("BASELINE MODEL SELECTION USING VALIDATION SET")
 
@@ -542,8 +611,8 @@ def main():
 
         print(
             f"{name:18s} | "
-            f"TRAIN RMSE {tr['rmse']:.6f} R² {tr['r2']:.6f} || "
-            f"VAL RMSE {va['rmse']:.6f} R² {va['r2']:.6f} || "
+            f"TRAIN RMSE {tr['rmse']:.6f} RÂ² {tr['r2']:.6f} || "
+            f"VAL RMSE {va['rmse']:.6f} RÂ² {va['r2']:.6f} || "
             f"GAP {gap_rmse:.6f}"
         )
 
@@ -557,7 +626,7 @@ def main():
 
     os.makedirs(OUT_DIR, exist_ok=True)
     results_df.to_csv(os.path.join(OUT_DIR, "baseline_metrics_table.csv"), index=False)
-    print(f"✅ Saved baseline metrics: {os.path.join(OUT_DIR, 'baseline_metrics_table.csv')}")
+    print(f"âœ… Saved baseline metrics: {os.path.join(OUT_DIR, 'baseline_metrics_table.csv')}")
 
     # ------------------------------------------------
     # 5B) HYPER TUNING (NO CV) for HistGradientBoosting using VAL ONLY
@@ -565,7 +634,7 @@ def main():
     tuned_hgb, tuned_params, tune_df = hypertune_hgb_no_cv(X_train, y_train, X_val, y_val, seed=SEED)
 
     # Evaluate tuned model (fit train only)
-    header("TUNED HGB (FIT TRAIN ONLY) → TRAIN/VAL/TEST RESULTS")
+    header("TUNED HGB (FIT TRAIN ONLY) â†’ TRAIN/VAL/TEST RESULTS")
     tuned_hgb.fit(X_train, y_train)
 
     pred_tr = tuned_hgb.predict(X_train)
@@ -577,13 +646,13 @@ def main():
     m_te = evaluate(y_test, pred_te)
 
     print("TUNED HGB (train-only fit)")
-    print(f"Train RMSE: {m_tr['rmse']:.6f} | Train R²: {m_tr['r2']:.6f}")
-    print(f"Val   RMSE: {m_va['rmse']:.6f} | Val   R²: {m_va['r2']:.6f}")
-    print(f"Test  RMSE: {m_te['rmse']:.6f} | Test  R²: {m_te['r2']:.6f}")
+    print(f"Train RMSE: {m_tr['rmse']:.6f} | Train RÂ²: {m_tr['r2']:.6f}")
+    print(f"Val   RMSE: {m_va['rmse']:.6f} | Val   RÂ²: {m_va['r2']:.6f}")
+    print(f"Test  RMSE: {m_te['rmse']:.6f} | Test  RÂ²: {m_te['r2']:.6f}")
     print(f"GAP (Val-Train RMSE): {m_va['rmse'] - m_tr['rmse']:.6f}")
 
     # ------------------------------------------------
-    # 6) FINAL TRAIN (TRAIN + VAL) → TEST ONCE (tuned model)
+    # 6) FINAL TRAIN (TRAIN + VAL) â†’ TEST ONCE (tuned model)
     # ------------------------------------------------
     header("FINAL EVALUATION ON TEST SET (USED ONCE) - TUNED HGB TRAINED ON (TRAIN+VAL)")
 
@@ -601,9 +670,9 @@ def main():
     test_m = evaluate(y_test, pred_test)
 
     print("\nBEST MODEL: Tuned HistGradientBoostingRegressor (no CV)")
-    print(f"Train RMSE: {train_m['rmse']:.6f} | Train R²: {train_m['r2']:.6f}")
-    print(f"Val   RMSE: {val_m['rmse']:.6f} | Val   R²: {val_m['r2']:.6f}")
-    print(f"Test  RMSE: {test_m['rmse']:.6f} | Test  R²: {test_m['r2']:.6f}")
+    print(f"Train RMSE: {train_m['rmse']:.6f} | Train RÂ²: {train_m['r2']:.6f}")
+    print(f"Val   RMSE: {val_m['rmse']:.6f} | Val   RÂ²: {val_m['r2']:.6f}")
+    print(f"Test  RMSE: {test_m['rmse']:.6f} | Test  RÂ²: {test_m['r2']:.6f}")
     print(f"GAP (Val-Train RMSE): {val_m['rmse'] - train_m['rmse']:.6f}")
 
     plot_r2_for_best("Tuned HistGradientBoosting (no CV)", train_m["r2"], val_m["r2"], test_m["r2"])
@@ -623,10 +692,10 @@ def main():
         "best_params": str(tuned_params),
     }])
     final_metrics.to_csv(os.path.join(OUT_DIR, "final_metrics_tuned_hgb_no_cv.csv"), index=False)
-    print(f"✅ Saved final metrics: {os.path.join(OUT_DIR, 'final_metrics_tuned_hgb_no_cv.csv')}")
+    print(f"âœ… Saved final metrics: {os.path.join(OUT_DIR, 'final_metrics_tuned_hgb_no_cv.csv')}")
 
     # ------------------------------------------------
-    # 7) TRAIN ON FULL DATA → PREDICT EVAL (OFFICIAL FILE)
+    # 7) TRAIN ON FULL DATA â†’ PREDICT EVAL (OFFICIAL FILE)
     # ------------------------------------------------
     header("TRAIN ON FULL DATA + PREDICT EVAL (OFFICIAL SUBMISSION FILE) - TUNED HGB")
 
@@ -641,16 +710,22 @@ def main():
     extra_path = os.path.join(OUT_DIR, "EVAL_target01_best.csv")
     out.to_csv(extra_path, index=False)
 
-    print(f"✅ Saved OFFICIAL: {official_path}")
-    print(f"✅ Saved EXTRA   : {extra_path}")
+    print(f"âœ… Saved OFFICIAL: {official_path}")
+    print(f"âœ… Saved EXTRA   : {extra_path}")
     print(out.head())
+
+    # Print consolidated EDA summary
+    eda_summary(X, y, X_eval)
 
     header("DONE")
     print(f"All plots saved in: {PLOT_DIR}")
     print(f"Baseline metrics saved in : {os.path.join(OUT_DIR, 'baseline_metrics_table.csv')}")
     print(f"Tuning table saved in     : {os.path.join(OUT_DIR, 'hgb_tuning_no_cv.csv')}")
+    print(f"Run log saved in          : {LOG_FILE}")
     print(f"Final metrics saved in    : {os.path.join(OUT_DIR, 'final_metrics_tuned_hgb_no_cv.csv')}")
 
 
 if __name__ == "__main__":
     main()
+
+

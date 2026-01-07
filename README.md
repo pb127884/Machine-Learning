@@ -56,6 +56,20 @@ pip install numpy pandas matplotlib scikit-learn
 python python12.py
 ```
 
+**Logs are automatically saved to:** `outputs/run_log_YYYYMMDD_HHMMSS.log`
+
+### Running on Server
+
+```bash
+# The script automatically creates a timestamped log file
+python python12.py
+
+# Or use nohup for background execution on Linux server:
+nohup python python12.py > outputs/run_stdout.log 2>&1 &
+```
+
+After the run completes, share the log file from `outputs/run_log_*.log` for analysis.
+
 ### Input Data
 
 The pipeline expects the following CSV files in the project root:
@@ -89,6 +103,8 @@ Two preprocessing pipelines:
 |----------|-------|
 | Basic | Median Imputer → Variance Threshold |
 | Scaled | Median Imputer → Variance Threshold → Standard Scaler |
+
+> **Note**: `SimpleImputer` checks for null values and imputes with median if found. Current dataset has **no null values** (0%), so no imputation occurs. Kept for robustness with new data.
 
 ### 4. Models
 
