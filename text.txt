@@ -1,0 +1,384 @@
+512e@oth-aw.de@ki-026:~/H/ml$ python python12.py
+  File "/home/512e/H/ml/python12.py", line 80
+    \"\"\"Print consolidated EDA summary report.\"\"\"
+     ^
+SyntaxError: unexpected character after line continuation character
+512e@oth-aw.de@ki-026:~/H/ml$ git remote -v
+origin  https://github.com/pb127884/Machine-Learning.git (fetch)
+origin  https://github.com/pb127884/Machine-Learning.git (push)
+512e@oth-aw.de@ki-026:~/H/ml$ git pull
+remote: Enumerating objects: 3, done.
+remote: Counting objects: 100% (3/3), done.
+remote: Total 3 (delta 0), reused 3 (delta 0), pack-reused 0 (from 0)
+Unpacking objects: 100% (3/3), 877 bytes | 43.00 KiB/s, done.
+From https://github.com/pb127884/Machine-Learning
+ * [new branch]      main       -> origin/main
+Already up-to-date.
+512e@oth-aw.de@ki-026:~/H/ml$ python python12.py
+  File "/home/512e/H/ml/python12.py", line 80
+    \"\"\"Print consolidated EDA summary report.\"\"\"
+     ^
+SyntaxError: unexpected character after line continuation character
+512e@oth-aw.de@ki-026:~/H/ml$ ^C
+512e@oth-aw.de@ki-026:~/H/ml$ python python12.py
+
+==========================================================================================
+LOAD DATA
+==========================================================================================
+X shape     : (10000, 273)
+y shape     : (10000,)
+X_eval shape: (10000, 273)
+
+==========================================================================================
+MEAN / MEDIAN / STD CHECK (X + y)
+==========================================================================================
+Numeric columns: 273
+
+Top 10 feature means:
+feat_32     24.7468
+feat_139    24.7205
+feat_239    24.6485
+feat_66     24.6275
+feat_31     24.6239
+feat_250    24.6109
+feat_35     24.6091
+feat_171    24.5807
+feat_54     24.5796
+feat_145    24.5576
+dtype: float64
+
+Top 10 feature medians:
+feat_145    25.0
+feat_73     25.0
+feat_250    25.0
+feat_239    25.0
+feat_139    25.0
+feat_35     25.0
+feat_54     25.0
+feat_197    25.0
+feat_31     25.0
+feat_82     25.0
+dtype: float64
+
+Top 10 feature std:
+feat_54     14.564713
+feat_82     14.517020
+feat_140    14.489006
+feat_206    14.481522
+feat_31     14.476671
+feat_151    14.475599
+feat_250    14.470295
+feat_171    14.460034
+feat_145    14.457862
+feat_199    14.455356
+dtype: float64
+
+y stats:
+mean=0.781754 median=0.671680 std=0.236976 min=0.354770 max=1.471922
+
+==========================================================================================
+DUPLICATION CHECKS (ROWS + COLUMNS)
+==========================================================================================
+Duplicate rows: 0
+Duplicate columns: none detected
+
+==========================================================================================
+DATA DISTRIBUTION (X) + MISSINGNESS + VARIATION
+==========================================================================================
+Shape: (10000, 273)
+
+Top 15 columns by missing %:
+feat_0      0.0
+feat_180    0.0
+feat_186    0.0
+feat_185    0.0
+feat_184    0.0
+feat_183    0.0
+feat_182    0.0
+feat_181    0.0
+feat_179    0.0
+feat_137    0.0
+feat_178    0.0
+feat_177    0.0
+feat_176    0.0
+feat_175    0.0
+feat_174    0.0
+dtype: float64
+
+Numeric columns: 273
+
+Top 15 features by variance:
+feat_54     212.130877
+feat_82     210.743873
+feat_140    209.931298
+feat_206    209.714485
+feat_31     209.574006
+feat_151    209.542952
+feat_250    209.389440
+feat_171    209.092597
+feat_145    209.029785
+feat_199    208.957310
+feat_32     208.672957
+feat_112    208.190553
+feat_125    208.112337
+feat_35     207.931690
+feat_197    207.931275
+dtype: float64
+
+Top 15 features by std:
+feat_54     14.564713
+feat_82     14.517020
+feat_140    14.489006
+feat_206    14.481522
+feat_31     14.476671
+feat_151    14.475599
+feat_250    14.470295
+feat_171    14.460034
+feat_145    14.457862
+feat_199    14.455356
+feat_32     14.445517
+feat_112    14.428810
+feat_125    14.426099
+feat_35     14.419837
+feat_197    14.419822
+dtype: float64
+
+==========================================================================================
+OUTLIER CHECK (REPORT ONLY - NO HANDLING)
+==========================================================================================
+
+Top 15 features by IQR-outlier rate:
+feat_181    0.95
+feat_155    0.91
+feat_120    0.90
+feat_202    0.90
+feat_161    0.89
+feat_63     0.89
+feat_268    0.87
+feat_39     0.86
+feat_177    0.86
+feat_228    0.86
+feat_15     0.86
+feat_1      0.85
+feat_242    0.85
+feat_92     0.85
+feat_208    0.84
+dtype: float64
+
+==========================================================================================
+CORRELATION (NUMERIC ONLY): feature-target + feature-feature
+==========================================================================================
+
+Top 20 features by |corr(feature, target)|:
+feat_254   -0.161660
+feat_184   -0.159781
+feat_50     0.146340
+feat_34     0.071623
+feat_193    0.064813
+feat_105   -0.057642
+feat_121    0.045278
+feat_68     0.038942
+feat_117   -0.035043
+feat_136    0.033122
+feat_126    0.032019
+feat_139   -0.030843
+feat_110   -0.028068
+feat_250    0.027118
+feat_167    0.026960
+feat_43    -0.025982
+feat_143   -0.025846
+feat_90     0.025516
+feat_154    0.025223
+feat_189    0.024781
+dtype: float64
+âœ… Saved correlation plots to: outputs/plots
+
+==========================================================================================
+TRAIN / VAL / TEST SPLIT (70/15/15) - STRATIFIED ON TARGET (REDUCES GAP)
+==========================================================================================
+Train: (7000, 273)
+Val  : (1500, 273)
+Test : (1500, 273)
+
+==========================================================================================
+TARGET DISTRIBUTION CHECK (train/val/test)
+==========================================================================================
+train   mean=0.781554 std=0.236579 min=0.354770 max=1.436186
+val     mean=0.782087 std=0.237559 min=0.358890 max=1.471922
+test    mean=0.782355 std=0.238235 min=0.357714 max=1.412764
+âœ… Saved target histograms to: outputs/plots
+
+==========================================================================================
+DATA LEAKAGE CHECK (OVERLAP BETWEEN SPLITS)
+==========================================================================================
+Leak-check overlap train vs val (first 3000 rows): 0
+Leak-check overlap train vs test (first 3000 rows): 0
+Leak-check overlap val vs test (first 3000 rows): 0
+
+==========================================================================================
+FEATURE PLOTTING (Top variance numeric features)
+==========================================================================================
+âœ… Saved feature histograms to: outputs/plots
+
+==========================================================================================
+DEFINE MODELS (BASELINE MODELS)
+==========================================================================================
+
+==========================================================================================
+BASELINE MODEL SELECTION USING VALIDATION SET
+==========================================================================================
+Ridge              | TRAIN RMSE 0.221941 RÂ² 0.119923 || VAL RMSE 0.230270 RÂ² 0.060429 || GAP 0.008329
+DecisionTree       | TRAIN RMSE 0.200035 RÂ² 0.285077 || VAL RMSE 0.244051 RÂ² -0.055399 || GAP 0.044016
+RandomForest       | TRAIN RMSE 0.085206 RÂ² 0.870286 || VAL RMSE 0.230436 RÂ² 0.059072 || GAP 0.145230
+HistGradientBoosting | TRAIN RMSE 0.084073 RÂ² 0.873712 || VAL RMSE 0.150423 RÂ² 0.599058 || GAP 0.066349
+Stacking           | TRAIN RMSE 0.163086 RÂ² 0.524797 || VAL RMSE 0.229819 RÂ² 0.064108 || GAP 0.066733
+
+==========================================================================================
+BASELINE BEST MODEL (by Validation RMSE)
+==========================================================================================
+model         HistGradientBoosting
+val_rmse                  0.150423
+val_mae                   0.128611
+val_r2                    0.599058
+train_rmse                0.084073
+train_r2                  0.873712
+gap_rmse                  0.066349
+Name: 3, dtype: object
+âœ… Saved baseline metrics: outputs/baseline_metrics_table.csv
+
+==========================================================================================
+HYPER TUNING (NO CV): HistGradientBoostingRegressor using VALIDATION ONLY
+==========================================================================================
+Total combinations to try: 2592
+[    1/2592] best_val_rmse=0.225711
+[   50/2592] best_val_rmse=0.149969
+[  100/2592] best_val_rmse=0.133035
+[  150/2592] best_val_rmse=0.133035
+[  200/2592] best_val_rmse=0.133035
+[  250/2592] best_val_rmse=0.133035
+[  300/2592] best_val_rmse=0.126300
+[  350/2592] best_val_rmse=0.118774
+[  400/2592] best_val_rmse=0.118774
+[  450/2592] best_val_rmse=0.114159
+[  500/2592] best_val_rmse=0.114159
+[  550/2592] best_val_rmse=0.114159
+[  600/2592] best_val_rmse=0.114159
+[  650/2592] best_val_rmse=0.114159
+[  700/2592] best_val_rmse=0.114159
+[  750/2592] best_val_rmse=0.114159
+[  800/2592] best_val_rmse=0.114159
+[  850/2592] best_val_rmse=0.114159
+[  900/2592] best_val_rmse=0.114159
+[  950/2592] best_val_rmse=0.114159
+[ 1000/2592] best_val_rmse=0.114159
+[ 1050/2592] best_val_rmse=0.114159
+[ 1100/2592] best_val_rmse=0.114159
+[ 1150/2592] best_val_rmse=0.114159
+[ 1200/2592] best_val_rmse=0.114159
+[ 1250/2592] best_val_rmse=0.114159
+[ 1300/2592] best_val_rmse=0.114159
+[ 1350/2592] best_val_rmse=0.114159
+[ 1400/2592] best_val_rmse=0.114159
+[ 1450/2592] best_val_rmse=0.114159
+[ 1500/2592] best_val_rmse=0.114159
+[ 1550/2592] best_val_rmse=0.114159
+[ 1600/2592] best_val_rmse=0.114159
+[ 1650/2592] best_val_rmse=0.114159
+[ 1700/2592] best_val_rmse=0.114159
+[ 1750/2592] best_val_rmse=0.114159
+[ 1800/2592] best_val_rmse=0.114159
+[ 1850/2592] best_val_rmse=0.114159
+[ 1900/2592] best_val_rmse=0.114159
+[ 1950/2592] best_val_rmse=0.114159
+[ 2000/2592] best_val_rmse=0.114159
+[ 2050/2592] best_val_rmse=0.114159
+[ 2100/2592] best_val_rmse=0.114159
+[ 2150/2592] best_val_rmse=0.114159
+[ 2200/2592] best_val_rmse=0.114159
+[ 2250/2592] best_val_rmse=0.114159
+[ 2300/2592] best_val_rmse=0.114159
+[ 2350/2592] best_val_rmse=0.114159
+[ 2400/2592] best_val_rmse=0.114159
+[ 2450/2592] best_val_rmse=0.114159
+[ 2500/2592] best_val_rmse=0.114159
+[ 2550/2592] best_val_rmse=0.114159
+[ 2592/2592] best_val_rmse=0.114159
+
+==========================================================================================
+BEST HGB PARAMS (by Validation RMSE) - NO CV
+==========================================================================================
+Best validation RMSE: 0.114159
+Best params:
+  model__l2_regularization: 0.0
+  model__learning_rate: 0.03
+  model__max_bins: 255
+  model__max_depth: None
+  model__max_iter: 800
+  model__max_leaf_nodes: 15
+  model__min_samples_leaf: 20
+âœ… Saved tuning table: outputs/hgb_tuning_no_cv.csv
+
+==========================================================================================
+TUNED HGB (FIT TRAIN ONLY) â†’ TRAIN/VAL/TEST RESULTS
+==========================================================================================
+TUNED HGB (train-only fit)
+Train RMSE: 0.071633 | Train RÂ²: 0.908320
+Val   RMSE: 0.114159 | Val   RÂ²: 0.769074
+Test  RMSE: 0.113949 | Test  RÂ²: 0.771224
+GAP (Val-Train RMSE): 0.042526
+
+==========================================================================================
+FINAL EVALUATION ON TEST SET (USED ONCE) - TUNED HGB TRAINED ON (TRAIN+VAL)
+==========================================================================================
+
+BEST MODEL: Tuned HistGradientBoostingRegressor (no CV)
+Train RMSE: 0.083888 | Train RÂ²: 0.874269
+Val   RMSE: 0.082688 | Val   RÂ²: 0.878845
+Test  RMSE: 0.110198 | Test  RÂ²: 0.786041
+GAP (Val-Train RMSE): -0.001200
+âœ… Saved Best Model RÂ² graph to: outputs/plots/r2_best_model.png
+âœ… Saved final metrics: outputs/final_metrics_tuned_hgb_no_cv.csv
+
+==========================================================================================
+TRAIN ON FULL DATA + PREDICT EVAL (OFFICIAL SUBMISSION FILE) - TUNED HGB
+==========================================================================================
+âœ… Saved OFFICIAL: outputs/EVAL_target01_91.csv
+âœ… Saved EXTRA   : outputs/EVAL_target01_best.csv
+   target01
+0  0.540740
+1  1.005208
+2  0.958835
+3  0.888208
+4  0.600802
+
+==========================================================================================
+EDA SUMMARY REPORT
+==========================================================================================
+Dataset Overview:
+  Training samples: 10,000
+  Evaluation samples: 10,000
+  Features: 273
+
+Data Quality Checks:
+  Null values: 0 (0.00%)
+  Duplicate rows: 0
+  Duplicate columns: 0
+
+Target Statistics:
+  Mean: 0.781754
+  Median: 0.671680
+  Std: 0.236976
+  Range: [0.354770, 1.471922]
+
+All EDA checks completed!
+Log file saved to: outputs/run_log_20260107_212907.log
+
+==========================================================================================
+DONE
+==========================================================================================
+All plots saved in: outputs/plots
+Baseline metrics saved in : outputs/baseline_metrics_table.csv
+Tuning table saved in     : outputs/hgb_tuning_no_cv.csv
+Run log saved in          : outputs/run_log_20260107_212907.log
+Final metrics saved in    : outputs/final_metrics_tuned_hgb_no_cv.csv
+512e@oth-aw.de@ki-026:~/H/ml$ 
