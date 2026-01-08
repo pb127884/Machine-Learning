@@ -1,2 +1,0 @@
-model,train_rmse,train_mae,train_r2,val_rmse,val_mae,val_r2,test_rmse,test_mae,test_r2,best_params
-TunedHistGradientBoosting_noCV,0.08388753510421411,0.06905618700419995,0.8742693235289303,0.08268797559971887,0.06869958536796905,0.8788452596222364,0.11019751207660561,0.09124082433898968,0.7860407118014838,"{'model__l2_regularization': 0.0, 'model__learning_rate': 0.03, 'model__max_bins': 255, 'model__max_depth': None, 'model__max_iter': 800, 'model__max_leaf_nodes': 15, 'model__min_samples_leaf': 20}"
