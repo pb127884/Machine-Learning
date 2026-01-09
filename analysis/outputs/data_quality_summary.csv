@@ -1,0 +1,5 @@
+Check,Count,Status
+Missing Values,0,✅ OK
+Duplicate Rows,0,✅ OK
+Duplicate Columns,0,✅ OK
+Non-Numeric Columns,0,✅ OK

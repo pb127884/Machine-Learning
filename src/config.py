@@ -1,26 +1,23 @@
-"""
-Configuration constants and paths for the ML pipeline.
-"""
+# config.py - project settings
 import os
 
-# Random seed for reproducibility
 SEED = 42
 
-# Data paths
+# data files
 DATA_X_PATH = "data/dataset_91.csv"
 DATA_Y_PATH = "data/target_91.csv"
 DATA_EVAL_PATH = "data/EVAL_91.csv"
 TARGET_COL = "target01"
 
-# Output directories
+# output folders
 OUT_DIR = "outputs"
 PLOT_DIR = os.path.join(OUT_DIR, "plots")
 LOG_DIR = os.path.join(OUT_DIR, "logs")
 
-# EDA parameters
+# analysis params
 MAX_FEATURE_HISTS = 20
 CORR_TOP_FEATURES = 50
 
-# Ensure directories exist
+# create folders if needed
 os.makedirs(PLOT_DIR, exist_ok=True)
 os.makedirs(LOG_DIR, exist_ok=True)

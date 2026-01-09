@@ -1,6 +1,4 @@
-"""
-Hyperparameter tuning functions.
-"""
+# tuning.py - hyperparameter search
 import os
 import numpy as np
 import pandas as pd
@@ -15,33 +13,22 @@ from src.config import SEED, OUT_DIR
 from src.utils import header, evaluate
 from src.logger import get_logger
 
-logger = get_logger("tuning")
+log = get_logger("tuning")
 
-
-def hypertune_hgb_no_cv(X_train, y_train, X_val, y_val, seed=SEED):
-    """
-    Hyper-tune HistGradientBoosting using ONLY the Validation set (no CV).
+def tune_hgb(X_train, y_train, X_val, y_val, seed=SEED):
+    # grid search for HistGradientBoosting
+    # using validation set only (no cv for speed)
     
-    Args:
-        X_train: Training features
-        y_train: Training target
-        X_val: Validation features
-        y_val: Validation target
-        seed: Random seed
+    header("HYPERPARAMETER TUNING")
     
-    Returns:
-        best_model, best_params, tuning_dataframe
-    """
-    header("HYPER TUNING (NO CV): HistGradientBoostingRegressor using VALIDATION ONLY")
-    
-    # Preprocessing pipeline
-    basic_prep = Pipeline([
+    # base model
+    prep = Pipeline([
         ("imputer", SimpleImputer(strategy="median")),
         ("var", VarianceThreshold(threshold=0.0)),
     ])
     
-    base_pipe = Pipeline([
-        ("prep", basic_prep),
+    base = Pipeline([
+        ("prep", prep),
         ("model", HistGradientBoostingRegressor(
             early_stopping=True,
             validation_fraction=0.1,
@@ -50,8 +37,8 @@ def hypertune_hgb_no_cv(X_train, y_train, X_val, y_val, seed=SEED):
         ))
     ])
     
-    # Hyperparameter grid
-    param_grid = {
+    # params to try
+    grid = {
         "model__learning_rate": [0.01, 0.03, 0.05, 0.1],
         "model__max_depth": [3, 5, 7, None],
         "model__max_leaf_nodes": [15, 31, 63],
@@ -61,16 +48,16 @@ def hypertune_hgb_no_cv(X_train, y_train, X_val, y_val, seed=SEED):
         "model__max_iter": [200, 400, 800],
     }
     
-    grid = list(ParameterGrid(param_grid))
-    logger.info(f"Total combinations to try: {len(grid)}")
+    combos = list(ParameterGrid(grid))
+    log.info(f"trying {len(combos)} combinations")
     
-    best = None
+    best_model = None
     best_params = None
-    best_val_rmse = np.inf
-    tuning_rows = []
+    best_rmse = np.inf
+    results = []
     
-    for i, params in enumerate(grid, 1):
-        m = clone(base_pipe)
+    for i, params in enumerate(combos, 1):
+        m = clone(base)
         m.set_params(**params)
         m.fit(X_train, y_train)
         
@@ -80,34 +67,32 @@ def hypertune_hgb_no_cv(X_train, y_train, X_val, y_val, seed=SEED):
         tr_m = evaluate(y_train, tr_pred)
         va_m = evaluate(y_val, va_pred)
         
-        tuning_rows.append({
+        results.append({
             "i": i,
             "val_rmse": va_m["rmse"],
             "val_r2": va_m["r2"],
             "train_rmse": tr_m["rmse"],
-            "train_r2": tr_m["r2"],
-            "gap_rmse": va_m["rmse"] - tr_m["rmse"],
+            "gap": va_m["rmse"] - tr_m["rmse"],
             **params
         })
         
-        if va_m["rmse"] < best_val_rmse:
-            best_val_rmse = va_m["rmse"]
-            best = m
+        if va_m["rmse"] < best_rmse:
+            best_rmse = va_m["rmse"]
+            best_model = m
             best_params = params
         
-        if i % 50 == 0 or i == 1 or i == len(grid):
-            logger.info(f"[{i:>5}/{len(grid)}] best_val_rmse={best_val_rmse:.6f}")
+        # print progress
+        if i % 50 == 0 or i == 1 or i == len(combos):
+            log.info(f"[{i}/{len(combos)}] best rmse: {best_rmse:.6f}")
     
-    header("BEST HGB PARAMS (by Validation RMSE) - NO CV")
-    logger.info(f"Best validation RMSE: {round(best_val_rmse, 6)}")
-    logger.info("Best params:")
+    header("BEST PARAMS")
+    log.info(f"best rmse: {best_rmse:.6f}")
     for k, v in best_params.items():
-        logger.info(f"  {k}: {v}")
+        log.info(f"  {k}: {v}")
     
-    # Save tuning table
-    tune_df = pd.DataFrame(tuning_rows).sort_values("val_rmse")
-    tune_path = os.path.join(OUT_DIR, "hgb_tuning_no_cv.csv")
-    tune_df.to_csv(tune_path, index=False)
-    logger.info(f"Saved tuning table: {tune_path}")
+    # save results
+    df = pd.DataFrame(results).sort_values("val_rmse")
+    df.to_csv(os.path.join(OUT_DIR, "tuning_results.csv"), index=False)
+    log.info("saved tuning results")
     
-    return best, best_params, tune_df
+    return best_model, best_params, df

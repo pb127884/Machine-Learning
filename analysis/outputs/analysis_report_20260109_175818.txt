@@ -1,0 +1,230 @@
+
+================================================================================
+STEP 1: DATA LOADING
+================================================================================
+X shape     : (10000, 273)
+y shape     : (10000,)
+X_eval shape: (10000, 273)
+
+First 5 rows of X:
+     feat_0    feat_1    feat_2    feat_3  ...  feat_269  feat_270  feat_271  feat_272
+0  3.875786 -0.345343 -2.529251 -0.241889  ...  2.508876  0.838922 -1.181811  1.664740
+1  0.303700 -1.736970 -0.343724  0.672148  ... -0.521764 -2.707825 -2.013735  0.294891
+2  2.453982 -1.007456 -0.918520  2.023754  ...  2.401604 -0.703551  0.686688  0.498888
+3  0.290260 -1.663442 -0.457013 -2.778921  ...  0.230923  0.010109 -0.754045  0.286852
+4  0.974797 -0.861851  2.004140 -2.627329  ...  1.131238  4.389710  0.862068  3.281310
+
+[5 rows x 273 columns]
+
+Data types:
+float64    273
+Name: count, dtype: int64
+
+================================================================================
+STEP 2: TARGET ANALYSIS
+================================================================================
+Target Statistics:
+  Mean   : 0.781754
+  Median : 0.671680
+  Std    : 0.236976
+  Min    : 0.354770
+  Max    : 1.471922
+  Range  : 1.117152
+
+Skewness indicator (mean-median)/std: 0.4645
+  → Right-skewed distribution (mean > median)
+
+✅ Saved: analysis/outputs/target_distribution.png
+
+================================================================================
+STEP 3: DATA QUALITY CHECKS
+================================================================================
+
+--- 3.1 Missing Values ---
+Total missing values: 0 (0.00%)
+✅ No missing values - data is complete!
+
+--- 3.2 Duplicate Rows ---
+Duplicate rows: 0
+✅ No duplicate rows!
+
+--- 3.3 Duplicate Columns ---
+Duplicate columns: 0
+✅ No duplicate columns!
+
+--- 3.4 Data Types ---
+Numeric columns  : 273
+Non-numeric cols : 0
+✅ All columns are numeric!
+
+✅ Saved: analysis/outputs/data_quality_summary.csv
+
+================================================================================
+STEP 4: FEATURE STATISTICS
+================================================================================
+Number of features: 273
+
+--- Top 10 Features by Mean ---
+feat_32     24.7468
+feat_139    24.7205
+feat_239    24.6485
+feat_66     24.6275
+feat_31     24.6239
+feat_250    24.6109
+feat_35     24.6091
+feat_171    24.5807
+feat_54     24.5796
+feat_145    24.5576
+dtype: float64
+
+--- Top 10 Features by Std ---
+feat_54     14.5647
+feat_82     14.5170
+feat_140    14.4890
+feat_206    14.4815
+feat_31     14.4767
+feat_151    14.4756
+feat_250    14.4703
+feat_171    14.4600
+feat_145    14.4579
+feat_199    14.4554
+dtype: float64
+
+--- Top 10 Features by Variance ---
+feat_54     212.1309
+feat_82     210.7439
+feat_140    209.9313
+feat_206    209.7145
+feat_31     209.5740
+feat_151    209.5430
+feat_250    209.3894
+feat_171    209.0926
+feat_145    209.0298
+feat_199    208.9573
+dtype: float64
+
+Zero-variance features: 0
+
+✅ Saved: analysis/outputs/feature_statistics.csv
+✅ Saved: analysis/outputs/feature_variance_distribution.png
+
+================================================================================
+STEP 5: CORRELATION ANALYSIS
+================================================================================
+
+--- 5.1 Feature-Target Correlation ---
+
+Top 20 features by |correlation with target|:
+feat_254   -0.161660
+feat_184   -0.159781
+feat_50     0.146340
+feat_34     0.071623
+feat_193    0.064813
+feat_105   -0.057642
+feat_121    0.045278
+feat_68     0.038942
+feat_117   -0.035043
+feat_136    0.033122
+feat_126    0.032019
+feat_139   -0.030843
+feat_110   -0.028068
+feat_250    0.027118
+feat_167    0.026960
+feat_43    -0.025982
+feat_143   -0.025846
+feat_90     0.025516
+feat_154    0.025223
+feat_189    0.024781
+dtype: float64
+
+Maximum |correlation|: 0.1617
+⚠️ All correlations are weak (<0.3)
+  → This suggests complex non-linear relationships
+  → Linear models may struggle
+  → Consider tree-based or ensemble methods
+
+✅ Saved: analysis/outputs/feature_target_correlations.csv
+✅ Saved: analysis/outputs/correlation_analysis.png
+
+--- 5.2 Feature-Feature Correlation ---
+✅ Saved: analysis/outputs/feature_correlation_heatmap.png
+
+================================================================================
+STEP 6: OUTLIER ANALYSIS
+================================================================================
+Top 15 features by outlier rate (IQR method):
+feat_181    0.95
+feat_155    0.91
+feat_202    0.90
+feat_120    0.90
+feat_161    0.89
+feat_63     0.89
+feat_268    0.87
+feat_39     0.86
+feat_15     0.86
+feat_177    0.86
+feat_228    0.86
+feat_92     0.85
+feat_242    0.85
+feat_1      0.85
+feat_191    0.84
+dtype: float64
+
+Total outliers: 15901 (0.58% of all values)
+✅ Outlier rates are low (<5% per feature)
+  → No outlier removal needed
+  → Tree-based models handle outliers well
+
+✅ Saved: analysis/outputs/outlier_analysis.csv
+✅ Saved: analysis/outputs/outlier_distribution.png
+
+================================================================================
+STEP 7: FEATURE DISTRIBUTION PLOTS
+================================================================================
+Plotting distributions for top 20 features by variance
+✅ Saved: analysis/outputs/top_feature_distributions.png
+
+================================================================================
+STEP 8: SUMMARY & RECOMMENDATIONS
+================================================================================
+
+📊 DATA SUMMARY
+  Samples: 10,000
+  Features: 273
+  Target range: [0.3548, 1.4719]
+
+✅ DATA QUALITY
+  Missing values: 0%
+  Duplicate rows: 0
+  All numeric: Yes
+
+📈 KEY FINDINGS
+  Max feature-target correlation: 0.1617
+  → Correlations are weak, suggesting non-linear patterns
+
+🎯 MY RECOMMENDATIONS
+  1. Use non-linear models (trees, boosting)
+  2. No feature removal needed (all features may contribute)
+  3. No outlier handling needed (<5% outliers)
+  4. StandardScaler optional for tree-based models
+  5. Try HistGradientBoosting first (handles weak signals well)
+
+📁 OUTPUT FILES GENERATED
+  - outlier_analysis.csv
+  - feature_correlation_heatmap.png
+  - analysis_report_20260109_174959.txt
+  - data_quality_summary.csv
+  - feature_target_correlations.csv
+  - target_distribution.png
+  - analysis_report_20260109_175818.txt
+  - top_feature_distributions.png
+  - outlier_distribution.png
+  - feature_statistics.csv
+  - correlation_analysis.png
+  - feature_variance_distribution.png
+
+================================================================================
+ANALYSIS COMPLETE
+================================================================================
+All outputs saved to: analysis/outputs/
+Report saved to: analysis/outputs/analysis_report_20260109_175818.txt
