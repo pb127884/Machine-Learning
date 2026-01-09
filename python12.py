@@ -27,9 +27,9 @@ from sklearn.ensemble import StackingRegressor
 # ----------------------------
 SEED = 42
 
-DATA_X_PATH = "dataset_91.csv"
-DATA_Y_PATH = "target_91.csv"
-DATA_EVAL_PATH = "EVAL_91.csv"
+DATA_X_PATH = "data/dataset_91.csv"
+DATA_Y_PATH = "data/target_91.csv"
+DATA_EVAL_PATH = "data/EVAL_91.csv"
 TARGET_COL = "target01"
 
 OUT_DIR = "outputs"
