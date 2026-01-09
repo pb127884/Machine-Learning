@@ -1,0 +1,5 @@
+feature,index,correlation,dt_importance,mi_score,selection_reason
+feat_165,165,-0.6289958619118982,0.8158831163186805,0.6537496482047107,Strong correlation (-0.6290); Primary DT split (81.6% importance); High MI score (0.6537)
+feat_259,259,0.23005500629326292,0.09052092103695174,0.13253024419735215,Moderate correlation (+0.2301); Important DT split (9.1% importance); Moderate MI score (0.1325)
+feat_14,14,0.04125781049423793,0.06497677440037831,0.10648977350794375,Important DT split (6.5% importance); Moderate MI score (0.1065)
+feat_105,105,0.15754634524782918,0.028619188243989544,0.09857776014058928,Moderate correlation (+0.1575); Used in DT (2.9% importance)
